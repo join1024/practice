@@ -17,8 +17,8 @@ public class MyBeanUtils {
         if(ignoreProperties!=null && ignoreProperties.length>0){
             ignorePropertieNames=new String[ignoreProperties.length];
             for (int i = 0; i < ignoreProperties.length; i++) {
-                MyFunctional fn=ignoreProperties[i];
-                ignorePropertieNames[i]=getPropertyName(fn);
+                MyFunctional lambda=ignoreProperties[i];
+                ignorePropertieNames[i]=getPropertyName(lambda);
             }
         }
 
