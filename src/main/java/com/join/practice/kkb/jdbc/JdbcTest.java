@@ -1,4 +1,4 @@
-package com.join.practice.jdbc;
+package com.join.practice.kkb.jdbc;
 
 import java.sql.*;
 
