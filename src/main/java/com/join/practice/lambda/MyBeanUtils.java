@@ -12,17 +12,17 @@ public class MyBeanUtils {
 
     public static <T> void copyProperties(Object source, Object target, MyFunctional<T> ... ignoreProperties){
 
-        String[] ignorePropertieNames=null;
+        String[] ignorePropertyNames=null;
 
         if(ignoreProperties!=null && ignoreProperties.length>0){
-            ignorePropertieNames=new String[ignoreProperties.length];
+            ignorePropertyNames=new String[ignoreProperties.length];
             for (int i = 0; i < ignoreProperties.length; i++) {
                 MyFunctional lambda=ignoreProperties[i];
-                ignorePropertieNames[i]=getPropertyName(lambda);
+                ignorePropertyNames[i]=getPropertyName(lambda);
             }
         }
 
-        BeanUtils.copyProperties(source,target,ignorePropertieNames);
+        BeanUtils.copyProperties(source,target,ignorePropertyNames);
     }
 
     public static <T> String getPropertyName(MyFunctional<T> lambda) {

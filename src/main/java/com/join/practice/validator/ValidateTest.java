@@ -30,7 +30,8 @@ public class ValidateTest {
             .failFast(false)
             .buildValidatorFactory();
     Validator validator = validatorFactory.getValidator();
-
+    Validator validator2 = validatorFactory.getValidator();
+    Validator validator3 = validatorFactory.getValidator();
     /**
      * 简单对象校验
      */
