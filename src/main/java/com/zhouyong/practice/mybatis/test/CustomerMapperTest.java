@@ -1,4 +1,4 @@
-package com.zhouyong.practice.mybatis;
+package com.zhouyong.practice.mybatis.test;
 
 import com.zhouyong.practice.mybatis.base.MybatisBaseTest;
 import com.zhouyong.practice.mybatis.test.CustomerEntity;
