@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhouyong.practice.mybatis.test.CustomerMapper">
+
+    <select id="selectAll" resultType="com.zhouyong.practice.mybatis.test.CustomerEntity">
+        select * from tb_customer
+    </select>
+
+    <insert id="insertMetrics">
+        insert into tb_customer(name,sex,age)
+        value(#{name},#{sex},#{age})
+    </insert>
+
+</mapper>
