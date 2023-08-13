@@ -16,6 +16,7 @@ import org.springframework.util.StringUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -29,30 +30,27 @@ import java.util.Properties;
  */
 public class MybatisBaseTest {
 
-    private static ThreadLocal<LocalSession> sessionThreadLocal;
-
-    private static SqlSessionFactory sqlSessionFactory;
-
     private final static String configLocation = "mybatis/mybatis-config-test.xml";
+
+    private static ThreadLocal<LocalSession> sessionThreadLocal;
 
     private static List<LocalSession> sessionPool;
 
-    /**
-     * 获取mapper对象
-     * @param mapperClass
-     * @param <T>
-     * @return
-     */
-    protected final <T> T getMapper(Class<T> mapperClass){
-        return sessionThreadLocal.get().getMapper(mapperClass);
-    }
+    private static SqlSessionFactory sqlSessionFactory;
+
 
     /**
-     * 单元测试启动前的初始化动作
+     * 单元类测试启动前的初始化动作
      * 初始化数据库session等相关信息
      */
     @BeforeClass
-    public final static void init() throws SQLException, IOException {
+    public final static void init() throws IOException {
+
+        //多个单元测试类批量执行时，init方法会重复执行，因此做空判断避免重复执行
+        if(sqlSessionFactory!=null){
+            return ;
+        }
+
         //解析mybatis全局配置文件
         Configuration configuration = parseConfiguration();
         //解析mapper配置
@@ -69,15 +67,41 @@ public class MybatisBaseTest {
     }
 
     /**
-     * 启动session
+     * 启动session并且注入mapper对象
      * 每一个单元测试方法启动之前会自动执行该方法
      * 如果子类也有@Before方法，父类的@Before方法先于子类执行
      */
     @Before
-    public final void openSession(){
+    public final void openSessionAndInjectMapper(){
         LocalSession localSession = createLocalSession();
         sessionThreadLocal.set(localSession);
         sessionPool.add(localSession);
+        injectMapper();
+    }
+
+    /**
+     * mapper代理对象注入
+     */
+    private void injectMapper(){
+        Class<? extends MybatisBaseTest> testClass = this.getClass();
+        Field[] fields = testClass.getDeclaredFields();
+        for (Field field : fields) {
+            if(field.getAnnotation(javax.annotation.Resource.class)!=null){
+                boolean accessible = field.isAccessible();
+                try {
+                    if(!accessible){
+                        field.setAccessible(true);
+                    }
+                    Object mapperObj = sessionThreadLocal.get().getMapper(field.getType());
+                    field.set(this,mapperObj);
+                } catch (IllegalAccessException e) {
+                    throw new RuntimeException("mapper对象注入失败:"+field.getName(),e);
+                }finally {
+                    field.setAccessible(accessible);
+                }
+            }
+        }
+
     }
 
     /**
