@@ -12,7 +12,34 @@ import java.util.*;
 public class ObjectFieldUtilsTest {
 
     @Test
-    public void test(){
+    public void testByMap(){
+        Map order = new HashMap(5);
+        Map user = new HashMap(5);
+        Map address = new HashMap(5);
+
+        order.put("orderId", "order001");
+        order.put("user", user);
+        order.put("all", new Map[]{user,address});
+
+        user.put("name","张三");
+        user.put("sex", "男");
+        user.put("numbers", new int[]{1,2,3});
+        user.put("address", address);
+
+        address.put("province", "广东省");
+        address.put("city",x "深圳市");
+
+        Assert.assertEquals("order001", ObjectFieldUtils.getFieldValue(order, "orderId"));
+        Assert.assertEquals(1, (int)ObjectFieldUtils.getFieldValue(order, "user.numbers[0]"));
+        Assert.assertEquals("广东省", ObjectFieldUtils.getFieldValue(order, "user.address.province"));
+
+        Assert.assertEquals("张三", ObjectFieldUtils.getFieldValue(order, "user.name"));
+        Assert.assertEquals("张三", ObjectFieldUtils.getFieldValue(order, "all[0].name"));
+        Assert.assertEquals("张三", ObjectFieldUtils.getFieldValue(user, "name"));
+    }
+
+    @Test
+    public void testByObject(){
         Address address1 = new Address("广东省","深圳市", "罗湖区菜围街道");
         Address address2 = new Address("湖南省","长沙市", "岳麓区梅溪湖街道");
         List<Address> addressList = new ArrayList<>();

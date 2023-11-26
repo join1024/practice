@@ -14,14 +14,17 @@ import java.util.stream.Stream;
 public class ObjectFieldUtils {
 
     /**
-     * 根据属性名获取对象的属性值
-     * @param obj 对象实例
+     * 根据属性名获取对象的属性值(支持OGNL表达式)
+     * eg: order.user.age , user.age , user.addressList[0] , user.addressArray[0] , user.addressList[0].city
+     *
+     * @param obj 对象，可以是Map，也支持对象里面嵌套Map，或者Map里面嵌套对象，且支持多层嵌套
      * @param propertyNamePath
      * 属性名的全路径，多层对象嵌套属性支持链式操作、数组下标的访问方式
      *   eg1: "a" 返回属性a的值
      *   eg2: "a[0]" 属性a为数组或者List，返回a的第一个元素值
      *   eg3: "a.b.c" 多层嵌套属性的访问方式，对象a包含对象b，对象b又包含c，通过该方式直接访问属性c的值
      *   eg4: "a.b.c[0]" 属性c为数组或者List，返回c的第一个元素值
+     *   eg4: "a.b.c[0].d" 属性c为数组或者List，返回c的第一个元素的d属性值
      *
      * @return
      */
