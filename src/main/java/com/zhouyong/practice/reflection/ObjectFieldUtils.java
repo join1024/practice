@@ -70,7 +70,7 @@ public class ObjectFieldUtils {
         T value = null;
         String fieldName = parseFieldName(propertyName);
 
-        //如果是Map
+        //如果是Map则直接通过key获取值
         if(Map.class.isAssignableFrom(objClass)){
             Object valueFromMap = (T)((Map) obj).get(fieldName);
             value = getElementIfArray(valueFromMap, parseIndex(propertyName));
@@ -86,7 +86,7 @@ public class ObjectFieldUtils {
                 try {
                     Object valueFromField = field.get(obj);
                     value = getElementIfArray(valueFromField, parseIndex(propertyName));
-                } catch (IllegalAccessException e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                 }finally {
                     if(!accessible){
@@ -102,7 +102,7 @@ public class ObjectFieldUtils {
     /**
      * 数组或List的特殊处理
      * @param value
-     * @param index
+     * @param index 不为空表示属性名带下标，index为对应的下标志，如： list[0]解析出的index为0
      * @return
      */
     private static <T> T getElementIfArray(Object value, Integer index) {
@@ -117,7 +117,7 @@ public class ObjectFieldUtils {
                 }
             }
 
-            //如果是数组，包含下标则返回对应的元素值
+            //如果是数组，则返回指定下标的元素值
             else if(valueType.isArray()){
                 //8种基本类型需要单独转换为对应基本类型的数组，直接转为Object[]会抛强制转换异常
                 if(char[].class.equals(valueType)){
@@ -224,7 +224,7 @@ public class ObjectFieldUtils {
         if(startIdx>0 && propertyName.endsWith("]")){
             try {
                 index = Integer.valueOf(propertyName.substring(startIdx+1, propertyName.length() - 1));
-            } catch (NumberFormatException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
