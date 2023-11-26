@@ -27,7 +27,7 @@ public class ObjectFieldUtilsTest {
         user.put("address", address);
 
         address.put("province", "广东省");
-        address.put("city",x "深圳市");
+        address.put("city", "深圳市");
 
         Assert.assertEquals("order001", ObjectFieldUtils.getFieldValue(order, "orderId"));
         Assert.assertEquals(1, (int)ObjectFieldUtils.getFieldValue(order, "user.numbers[0]"));
