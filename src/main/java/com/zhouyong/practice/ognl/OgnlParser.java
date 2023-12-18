@@ -1,4 +1,4 @@
-package com.zhouyong.practice.reflection;
+package com.zhouyong.practice.ognl;
 
 import java.lang.reflect.Field;
 import java.util.Iterator;
@@ -8,10 +8,12 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
+ * OGNL解析器
+ * 对象导航图语言（Object Graph Navigation Language）
  * @author zhouyong
  * @date 2023/11/26 8:07 下午
  */
-public class ObjectFieldUtils {
+public class OgnlParser {
 
     /**
      * 根据属性名获取对象的属性值(支持OGNL表达式)
@@ -26,7 +28,7 @@ public class ObjectFieldUtils {
      *   eg4: "a.b.c[0]" 属性c为数组或者List，返回c的第一个元素值
      *   eg4: "a.b.c[0].d" 属性c为数组或者List，返回c的第一个元素的d属性值
      *
-     * @return
+     * @return T
      */
     public static <T> T getFieldValue(Object obj, String propertyNamePath){
 
@@ -43,7 +45,7 @@ public class ObjectFieldUtils {
 
         while(fieldNameIterator.hasNext()){
             String fieldName = fieldNameIterator.next();
-            fieldValue = getValue(iteratorObj, fieldName);
+            fieldValue = getPropertyValue(iteratorObj, fieldName);
             if(fieldValue!=null){
                 if(fieldNameIterator.hasNext()){
                     iteratorObj = fieldValue;
@@ -56,23 +58,23 @@ public class ObjectFieldUtils {
 
     /**
      * 根据属性名获取属性值
-     * @param obj
-     * @param propertyName
-     * @return
+     * @param obj 被访问对象
+     * @param propertyName 属性名
+     * @return 返回属性值
      */
-    private static <T> T getValue(Object obj, String propertyName){
+    private static <T> T getPropertyValue(Object obj, String propertyName){
         if(obj==null || propertyName==null){
             return null;
         }
 
-        Class objClass = obj.getClass();
+        Class<?> objClass = obj.getClass();
 
         T value = null;
         String fieldName = parseFieldName(propertyName);
 
         //如果是Map则直接通过key获取值
         if(Map.class.isAssignableFrom(objClass)){
-            Object valueFromMap = (T)((Map) obj).get(fieldName);
+            Object valueFromMap = ((Map<?, ?>) obj).get(fieldName);
             value = getElementIfArray(valueFromMap, parseIndex(propertyName));
         }
         //否则通过反射获取字段值
@@ -101,7 +103,7 @@ public class ObjectFieldUtils {
 
     /**
      * 数组或List的特殊处理
-     * @param value
+     * @param value 对象值
      * @param index 不为空表示属性名带下标，index为对应的下标志，如： list[0]解析出的index为0
      * @return
      */
